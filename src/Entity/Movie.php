@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * Movie class is used for setting movie details and storing the data in a
@@ -45,7 +46,12 @@ class Movie {
   private int $year;
 
   #[Assert\NotNull]
-  #[CheckDescLength]
+  #[Assert\Length([
+    'min' => 2,
+    'max' => 500,
+    'maxMessage' => 'Maximum {{ limit }} characters are allowed',
+    'minMessage' => 'Minimum {{ limit }} characters are allowed'
+  ])]
   #[ORM\Column(type: 'text')]
   private string $description;
 
