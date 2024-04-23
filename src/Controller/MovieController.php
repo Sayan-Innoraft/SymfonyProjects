@@ -9,6 +9,7 @@ use App\Form\MovieType;
 use App\Repository\MovieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,6 +25,17 @@ class MovieController extends AbstractController {
     $this->movieRepository = $movieRepository;
   }
 
+  /**
+   * Redirects to movies list when user access '/' path.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   Returns redirect response to movie list.
+   */
+  #[Route('/', name: 'home')]
+  public function index():Response {
+//    return $this->redirectToRoute('list-movie');
+    return new RedirectResponse($this->generateUrl('list-movie'));
+  }
   /**
    * Returns all movies stored in database.
    *
@@ -47,7 +59,7 @@ class MovieController extends AbstractController {
    * @return \Symfony\Component\HttpFoundation\Response
    *   Displays a single movie.
    */
-  #[Route('/movies/read-more/{id}', name: 'show-movie',format: 'int')]
+  #[Route('/movies/read-more/{id}', name: 'show-movie',requirements: ['id'=> '\d+'])]
   public function getOneMovie(int $id):Response {
     $movie = $this->movieRepository->find($id);
     return $this->render('movie/show-movie.html.twig',[
@@ -72,9 +84,9 @@ class MovieController extends AbstractController {
     $form->handleRequest($request);
     if($form->isSubmitted() && $form->isValid()) {
       $movie = $form->getData();
-      $imagePath =$form->get('thumbnail')->getData();
+      $imagePath = $form->get('thumbnail')->getData();
       if($imagePath){
-        $newFileName = uniqid() . '.' .$imagePath->guessExtension();
+        $newFileName = uniqid() . '.' . $imagePath->guessExtension();
         try {
           $imagePath->move(
             $this->getParameter('kernel.project_dir') . '/public/uploads/movies',
@@ -90,7 +102,7 @@ class MovieController extends AbstractController {
       return $this->redirectToRoute('list-movie');
     }
     return $this->render('movie/add.html.twig',[
-      'form' => $form->createView()
+      'form' => $form
     ]);
   }
 }

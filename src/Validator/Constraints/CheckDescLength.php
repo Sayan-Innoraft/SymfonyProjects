@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Constraints;
+namespace App\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints\Compound;
 use Symfony\Component\Validator\Constraints\Length;
@@ -19,8 +19,8 @@ class CheckDescLength extends Compound {
   protected function getConstraints(array $options):array {
     return [
       new Length([
-        'min' => 3,
-        'max' => 250,
+        'min' => 2,
+        'max' => 500,
         'maxMessage' => 'Maximum {{ limit }} characters are allowed',
         'minMessage' => 'Minimum {{ limit }} characters are allowed'
       ])

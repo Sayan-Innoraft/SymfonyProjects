@@ -2,21 +2,18 @@
 
 namespace App\Entity;
 
-use App\Constraints\CheckDescLength;
 use App\Repository\MovieRepository;
-use Doctrine\ORM\Mapping\Column;
+use App\Validator\Constraints\CheckDescLength;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
- * Movie class is used for setting movie details and storing the data in
- * a database using ORM.
+ * Movie class is used for setting movie details and storing the data in a
+ * database using ORM.
  */
-
+#[ORM\Table('movie')]
 #[Entity(repositoryClass: MovieRepository::class)]
 #[UniqueEntity([
   'fields' => 'title',
@@ -24,27 +21,36 @@ use Symfony\Component\Validator\Constraints\NotNull;
 ])]
 class Movie {
 
-  #[Id]
-  #[GeneratedValue(strategy: 'AUTO')]
-  #[Column(type: 'integer')]
+  #[ORM\Id]
+  #[ORM\GeneratedValue(strategy: 'AUTO')]
+  #[ORM\Column(type: 'integer')]
   private int $id;
 
-  #[NotNull]
-  #[Column(type: 'string',length: 100)]
+  #[Assert\NoSuspiciousCharacters]
+  #[Assert\NotNull]
+  #[ORM\Column(type: 'string',length: 100)]
   #[Assert\Length([
     'max' => 100,
     'min' => 1
   ])]
   private string $title;
 
-  #[Column(type: 'integer')]
+  #[Assert\NotNull]
+  #[ORM\Column(type: 'integer')]
+  #[Assert\Range([
+    'min' => 1600,
+    'max' => 2024,
+    'notInRangeMessage' => 'Year must be between {{ min }} and {{ max }}'
+  ])]
   private int $year;
 
+  #[Assert\NotNull]
   #[CheckDescLength]
-  #[Column(type: 'string')]
+  #[ORM\Column(type: 'text')]
   private string $description;
 
-  #[Column(type: 'string')]
+  #[Assert\NotNull]
+  #[ORM\Column(type: 'string')]
   private string $thumbnail;
 
   public function getId():int {

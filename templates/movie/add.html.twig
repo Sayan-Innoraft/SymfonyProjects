@@ -6,3 +6,8 @@
 		{{ form(form) }}
 	</div>
 {% endblock %}
+
+{% block navigationPath %}
+	<a class="btn btn-primary position-absolute mt-3"
+	   href="{{ path('list-movie') }}">Back to main page</a>
+{% endblock %}
